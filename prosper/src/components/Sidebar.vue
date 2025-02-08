@@ -17,14 +17,9 @@ const handleNavigation = (section: string) => {
 <template>
   <aside class="sidebar">
     <div class="sidebar-top">
-      <div class="logo">prosper</div>
-      
-      <div class="search-bar">
-        <input 
-          type="text" 
-          placeholder="Search or jump to"
-          class="search-input"
-        >
+      <div class="logo">
+        <img src="../assets/prosper.png" alt="Prosper logo" class="logo-img">
+        <span>prosper</span>
       </div>
 
       <nav class="main-nav">
@@ -33,7 +28,9 @@ const handleNavigation = (section: string) => {
           :class="{ active: activeSection === 'dashboard' }"
           @click="handleNavigation('dashboard')"
         >
-          <span class="icon">📊</span>
+          <span class="icon">
+            <font-awesome-icon icon="chart-line" />
+          </span>
           Dashboard
         </button>
         <button 
@@ -41,7 +38,9 @@ const handleNavigation = (section: string) => {
           :class="{ active: activeSection === 'transactions' }"
           @click="handleNavigation('transactions')"
         >
-          <span class="icon">📝</span>
+          <span class="icon">
+            <font-awesome-icon icon="receipt" />
+          </span>
           Transactions
         </button>
         <button 
@@ -49,7 +48,9 @@ const handleNavigation = (section: string) => {
           :class="{ active: activeSection === 'budgets' }"
           @click="handleNavigation('budgets')"
         >
-          <span class="icon">💰</span>
+          <span class="icon">
+            <font-awesome-icon icon="wallet" />
+          </span>
           Budgets
         </button>
       </nav>
@@ -67,3 +68,28 @@ const handleNavigation = (section: string) => {
     </div>
   </aside>
 </template>
+
+<style scoped>
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.logo-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5em;
+}
+</style>

@@ -52,15 +52,15 @@ async function handleSubmit() {
         <div class="form-group">
           <label for="balance">What's your current net worth?</label>
           <div class="amount-input">
-            <span class="currency">$</span>
+            <span class="currency">kr</span>
             <input 
               id="balance"
               v-model.number="initialBalance"
               type="number"
               required
               min="0"
-              step="0.01"
-              placeholder="0.00"
+              step="1"
+              placeholder="0"
             >
           </div>
           <p class="help-text">
@@ -112,7 +112,7 @@ async function handleSubmit() {
 }
 
 .amount-input input {
-  padding-left: 2rem !important;
+  padding-left: 2.5rem !important;
 }
 
 .help-text {

@@ -21,9 +21,10 @@ export interface Budget {
 
 export interface Category {
   id: number
+  user_id: string
   name: string
-  type: 'income' | 'expense'
-  color: string
+  type?: 'income' | 'expense'
+  color?: string
 }
 
 export interface User {
