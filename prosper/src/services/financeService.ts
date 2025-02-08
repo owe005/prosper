@@ -1,5 +1,6 @@
-import supabase from '@/lib/supabase'
-import type { Transaction, Budget, Category } from '@/types/database.types'
+import { supabase } from "../lib/supabase"
+import type { Transaction, Budget, Category } from '../types/database.types'
+
 
 export const financeService = {
   // Transaction methods
