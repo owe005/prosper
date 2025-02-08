@@ -1,12 +1,13 @@
 export interface Transaction {
-  id: number
+  id: string
   user_id: string
-  amount: number
   description: string
+  amount: number
   category: string
   type: 'income' | 'expense'
   date: string
   created_at: string
+  is_initial_balance?: boolean
 }
 
 export interface Budget {
