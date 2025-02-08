@@ -13,28 +13,3 @@ const currency = '$'
     </div>
   </div>
 </template>
-
-<style scoped>
-.balance-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-h2 {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.balance {
-  font-size: 2.5rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.currency {
-  font-size: 1.8rem;
-  margin-right: 0.25rem;
-}
-</style> 

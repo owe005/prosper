@@ -19,27 +19,3 @@ const themeStore = useThemeStore()
     </svg>
   </button>
 </template>
-
-<style scoped>
-.theme-toggle {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.5rem;
-  border-radius: 50%;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--text-primary);
-  transition: all 0.3s ease;
-}
-
-.theme-toggle:hover {
-  background: var(--bg-hover);
-}
-
-.icon {
-  width: 24px;
-  height: 24px;
-}
-</style> 

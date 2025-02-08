@@ -1,10 +1,11 @@
 @import 'tailwindcss';
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
   font-weight: normal;
+  height: 100vh;
 }
 
 a,
@@ -28,9 +29,8 @@ a,
   }
 
   #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
+    width: 100%;
+    height: 100vh;
   }
 }
 
@@ -46,6 +46,9 @@ a,
   --success: #4CAF50;
   --warning: #FFA726;
   --danger: #EF5350;
+  --primary: #38a169;
+  --primary-hover: #2f855a;
+  --primary-text: #ffffff;
 }
 
 :root.dark {
@@ -60,19 +63,561 @@ a,
   --success: #81c784;
   --warning: #ffb74d;
   --danger: #e57373;
+  --primary: #48bb78;
+  --primary-hover: #68d391;
+  --primary-text: #ffffff;
 }
 
+/* Global styles */
 body {
   background-color: var(--bg-secondary);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   transition: background-color 0.3s ease, color 0.3s ease;
+  margin: 0;
+  padding: 0;
 }
 
-/* Add smooth transitions for theme changes */
+/* App Layout */
+.app-layout {
+  display: flex;
+  height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  width: 300px;
+  background-color: var(--bg-primary);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  box-shadow: var(--card-shadow);
+}
+
+.sidebar-top {
+  padding: 1.5rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+.search-bar {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.main-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--text-primary);
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+
+.nav-item:hover {
+  background-color: var(--bg-hover);
+}
+
+.nav-item.active {
+  background-color: var(--primary);
+  color: var(--primary-text);
+}
+
+.nav-item.active:hover {
+  background-color: var(--primary-hover);
+}
+
+.accounts-section {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+.account-group {
+  margin-bottom: 1.5rem;
+}
+
+.account-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.account-type {
+  font-weight: 500;
+}
+
+.account-total {
+  text-align: right;
+}
+
+.account-items {
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.account-item {
+  padding: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.account-item:last-child {
+  border-bottom: none;
+}
+
+.item-number {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Dashboard Styles */
+.dashboard {
+  padding: 2rem;
+}
+
+.dashboard-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.grid-item {
+  background-color: var(--bg-primary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--card-shadow);
+}
+
+.transactions {
+  grid-column: span 2;
+}
+
+/* Balance Card Styles */
+.balance-card {
+  text-align: center;
+}
+
+.balance {
+  margin-top: 1rem;
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--primary);
+}
+
+.currency {
+  font-size: 1.5rem;
+  margin-right: 0.25rem;
+}
+
+/* Transaction List Styles */
+.transaction-list {
+  height: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.add-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary);
+  color: var(--primary-text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.add-button:hover {
+  background-color: var(--primary-hover);
+  opacity: 1;
+}
+
+.transactions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+}
+
+.tx-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.tx-description {
+  font-weight: 500;
+}
+
+.tx-category {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.tx-details {
+  text-align: right;
+}
+
+.tx-amount {
+  font-weight: 500;
+}
+
+.tx-amount.positive {
+  color: var(--success);
+}
+
+.tx-amount.negative {
+  color: var(--danger);
+}
+
+.tx-date {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Budget Overview Styles */
+.budget-overview {
+  height: 100%;
+}
+
+.categories {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.category {
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--success);
+  transition: width 0.3s ease;
+}
+
+.progress.warning {
+  background-color: var(--warning);
+}
+
+.progress.danger {
+  background-color: var(--danger);
+}
+
+/* Form Styles */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
+.form-actions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.form-actions button[type="button"] {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.form-actions button[type="button"]:hover {
+  background-color: var(--bg-hover);
+}
+
+.form-actions button[type="submit"] {
+  background-color: var(--primary);
+  border: none;
+  color: var(--primary-text);
+}
+
+.form-actions button[type="submit"]:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Theme Toggle Styles */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.5rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--card-shadow);
+}
+
+.theme-toggle:hover {
+  background-color: var(--bg-hover);
+}
+
+.theme-toggle .icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-primary);
+}
+
+/* Login Page Styles */
+.login-container {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-secondary);
+  padding: 1rem;
+}
+
+.login-card {
+  background-color: var(--bg-primary);
+  padding: 2.5rem;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  width: 100%;
+  max-width: 400px;
+  margin: auto;
+}
+
+.login-card .title {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.error-message {
+  color: var(--danger);
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.toggle-button {
+  background: none;
+  border: none;
+  color: var(--primary);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.toggle-button:hover {
+  color: var(--primary-hover);
+  text-decoration: none;
+  opacity: 0.9;
+}
+
+/* Utility Classes */
+.positive {
+  color: var(--success);
+}
+
+.negative {
+  color: var(--danger);
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+}
+
+.error {
+  color: var(--danger);
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+/* Transitions */
 * {
   transition: background-color 0.3s ease, 
               color 0.3s ease, 
               border-color 0.3s ease, 
               box-shadow 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 250px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .transactions {
+    grid-column: span 1;
+  }
+
+  .main-content {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    z-index: 100;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    padding: 0.5rem;
+  }
+}
+
+.sidebar-bottom {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  margin-top: auto;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.user-email {
+  font-weight: 500;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sign-out-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--bg-secondary);
+  color: var(--danger);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.sign-out-button:hover {
+  background-color: var(--danger);
+  color: white;
+  border-color: var(--danger);
 }

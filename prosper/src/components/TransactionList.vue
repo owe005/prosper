@@ -1,11 +1,76 @@
 <script setup lang="ts">
-// TODO: Replace with actual data from store
-const transactions = [
-  { id: 1, description: 'Grocery Shopping', amount: -120.50, date: '2024-02-08', category: 'Food' },
-  { id: 2, description: 'Salary Deposit', amount: 3000, date: '2024-02-07', category: 'Income' },
-  { id: 3, description: 'Electric Bill', amount: -85.20, date: '2024-02-06', category: 'Utilities' },
-  { id: 4, description: 'Coffee Shop', amount: -4.50, date: '2024-02-06', category: 'Food' }
-]
+import { ref, onMounted } from 'vue'
+import { financeService } from '../services/financeService'
+import { supabase } from '../lib/supabase'
+import type { Transaction } from '../types/database.types'
+import Modal from './Modal.vue'
+
+const transactions = ref<Transaction[]>([])
+const isLoading = ref(true)
+const error = ref('')
+
+// Form state
+const showModal = ref(false)
+const newTransaction = ref({
+  description: '',
+  amount: 0,
+  category: '',
+  type: 'expense' as const,
+  date: new Date().toISOString().split('T')[0]
+})
+
+const loadTransactions = async () => {
+  try {
+    isLoading.value = true
+    transactions.value = await financeService.getTransactions()
+  } catch (e) {
+    error.value = 'Failed to load transactions'
+    console.error(e)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const addTransaction = async () => {
+  try {
+    const amount = newTransaction.value.type === 'expense' 
+      ? -Math.abs(newTransaction.value.amount) 
+      : Math.abs(newTransaction.value.amount)
+    
+    await financeService.addTransaction({
+      ...newTransaction.value,
+      amount,
+      user_id: (await supabase.auth.getUser()).data.user?.id as string
+    })
+    
+    // Reset form and reload transactions
+    newTransaction.value = {
+      description: '',
+      amount: 0,
+      category: '',
+      type: 'expense',
+      date: new Date().toISOString().split('T')[0]
+    }
+    showModal.value = false
+    await loadTransactions()
+  } catch (e) {
+    error.value = 'Failed to add transaction'
+    console.error(e)
+  }
+}
+
+const resetForm = () => {
+  newTransaction.value = {
+    description: '',
+    amount: 0,
+    category: '',
+    type: 'expense',
+    date: new Date().toISOString().split('T')[0]
+  }
+  showModal.value = false
+}
+
+onMounted(loadTransactions)
 
 const formatDate = (dateStr: string) => {
   return new Date(dateStr).toLocaleDateString('en-US', {
@@ -22,8 +87,51 @@ const formatAmount = (amount: number) => {
 
 <template>
   <div class="transaction-list">
-    <h2>Recent Transactions</h2>
-    <div class="transactions">
+    <div class="header">
+      <h2>Recent Transactions</h2>
+      <button @click="showModal = true" class="add-button">Add Transaction</button>
+    </div>
+
+    <Modal 
+      :show="showModal"
+      title="Add Transaction"
+      @close="resetForm"
+    >
+      <form @submit.prevent="addTransaction" class="form">
+        <div class="form-group">
+          <label>Description</label>
+          <input v-model="newTransaction.description" required type="text">
+        </div>
+        <div class="form-group">
+          <label>Amount</label>
+          <input v-model.number="newTransaction.amount" required type="number" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <input v-model="newTransaction.category" required type="text">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select v-model="newTransaction.type">
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input v-model="newTransaction.date" required type="date">
+        </div>
+        <div class="form-actions">
+          <button type="button" @click="resetForm">Cancel</button>
+          <button type="submit">Add Transaction</button>
+        </div>
+      </form>
+    </Modal>
+
+    <div v-if="error" class="error">{{ error }}</div>
+    <div v-if="isLoading" class="loading">Loading transactions...</div>
+
+    <div v-else class="transactions">
       <div v-for="tx in transactions" :key="tx.id" class="transaction">
         <div class="tx-info">
           <div class="tx-description">{{ tx.description }}</div>
@@ -39,74 +147,3 @@ const formatAmount = (amount: number) => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.transaction-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-h2 {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.transactions {
-  display: flex;
-  flex-direction: column;
-}
-
-.transaction {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.transaction:last-child {
-  border-bottom: none;
-}
-
-.tx-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.tx-description {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.tx-category {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-
-.tx-details {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.25rem;
-}
-
-.tx-amount {
-  font-weight: 600;
-}
-
-.tx-amount.negative {
-  color: var(--danger);
-}
-
-.tx-amount.positive {
-  color: var(--success);
-}
-
-.tx-date {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-}
-</style> 
