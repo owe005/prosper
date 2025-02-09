@@ -9,12 +9,15 @@ const router = useRouter()
 const isSignUp = ref(false)
 const email = ref('')
 const password = ref('')
+const firstName = ref('')
+const lastName = ref('')
 
 async function handleSubmit() {
   if (!email.value || !password.value) return
+  if (isSignUp.value && (!firstName.value || !lastName.value)) return
 
   if (isSignUp.value) {
-    await auth.signUp(email.value, password.value)
+    await auth.signUp(email.value, password.value, firstName.value, lastName.value)
   } else {
     await auth.signIn(email.value, password.value)
   }
@@ -31,6 +34,30 @@ async function handleSubmit() {
       <h1 class="title">{{ isSignUp ? 'Create Account' : 'Welcome Back' }}</h1>
       
       <form @submit.prevent="handleSubmit" class="login-form">
+        <template v-if="isSignUp">
+          <div class="form-group">
+            <label for="firstName">First Name</label>
+            <input 
+              id="firstName"
+              v-model="firstName"
+              type="text"
+              required
+              placeholder="Enter your first name"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name</label>
+            <input 
+              id="lastName"
+              v-model="lastName"
+              type="text"
+              required
+              placeholder="Enter your last name"
+            >
+          </div>
+        </template>
+
         <div class="form-group">
           <label for="email">Email</label>
           <input 

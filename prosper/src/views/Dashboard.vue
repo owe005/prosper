@@ -1,15 +1,38 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { financeService } from '../services/financeService'
 import type { Transaction } from '../types/database.types'
+import { useAuthStore } from '@/stores/auth'
 import BalanceCard from '../components/BalanceCard.vue'
 import BudgetOverview from '../components/BudgetOverview.vue'
 import TransactionList from '../components/TransactionList.vue'
 import NetworthChart from '../components/NetworthChart.vue'
 import ThemeToggle from '@/components/ThemeToggle.vue'
 
+const auth = useAuthStore()
 const transactions = ref<Transaction[]>([])
 const isLoading = ref(true)
+
+const getTimeBasedGreeting = () => {
+  const hour = new Date().getHours()
+  if (hour < 12) return 'Good morning'
+  if (hour < 17) return 'Good afternoon'
+  return 'Good evening'
+}
+
+const formattedDate = computed(() => {
+  const date = new Date()
+  return date.toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'short',
+    year: undefined,
+  }).replace(',', '')
+})
+
+const greeting = computed(() => {
+  const firstName = auth.user?.user_metadata?.first_name || ''
+  return `${getTimeBasedGreeting()}, ${firstName}`
+})
 
 const loadTransactions = async () => {
   try {
@@ -28,7 +51,10 @@ onMounted(loadTransactions)
   <div class="dashboard">
     <ThemeToggle />
     <header class="dashboard-header">
-      <h1>Welcome Back</h1>
+      <div class="greeting-container">
+        <h1>{{ greeting }}</h1>
+        <p class="date">{{ formattedDate }}</p>
+      </div>
     </header>
     
     <div class="dashboard-grid">
@@ -49,10 +75,22 @@ onMounted(loadTransactions)
   margin-bottom: 2rem;
 }
 
+.greeting-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 h1 {
   font-size: 2rem;
   font-weight: 600;
   color: var(--text-primary);
+}
+
+.date {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  font-weight: 500;
 }
 
 .dashboard-grid {

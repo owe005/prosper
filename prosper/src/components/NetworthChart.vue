@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { Line } from 'vue-chartjs'
 import {
   Chart as ChartJS,
@@ -15,6 +15,7 @@ import {
 import 'chartjs-adapter-date-fns'
 import type { Transaction } from '../types/database.types'
 
+// Register the components with Chart.js
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -30,17 +31,21 @@ const props = defineProps<{
   transactions: Transaction[]
 }>()
 
-const chartData = computed(() => {
-  // Sort transactions by date
-  const sortedTransactions = [...props.transactions]
-    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+// Create a ref for the chart so we can update it later
+const chartRef = ref<any>(null)
 
-  // Calculate running balance for each point
+// Compute the chart data: sort transactions by date and compute a running balance
+const chartData = computed(() => {
+  const sortedTransactions = [...props.transactions].sort(
+    (a, b) =>
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+  )
+
   let balance = 0
   const data = sortedTransactions.map(tx => {
     balance += tx.amount
     return {
-      x: new Date(tx.created_at).getTime(),
+      x: new Date(tx.date).getTime(),
       y: balance
     }
   })
@@ -50,18 +55,21 @@ const chartData = computed(() => {
       {
         label: 'Net Worth',
         data,
+        // Set the line color; the gradient will be set on mounted
         borderColor: '#10B981',
+        // Provide a placeholder fill that will be replaced with a gradient
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         borderWidth: 2,
         fill: true,
         tension: 0.4,
-        pointRadius: 2,
+        pointRadius: 0,      // hide points for a cleaner look
         pointHoverRadius: 4
       }
     ]
   }
 })
 
+// Configure options for a minimal, clean look
 const options = {
   responsive: true,
   maintainAspectRatio: false,
@@ -72,31 +80,56 @@ const options = {
   plugins: {
     legend: {
       display: false
+    },
+    tooltip: {
+      mode: 'index' as const,
+      intersect: false,
+      callbacks: {
+        label: (context: any) => {
+          // Customize tooltip text (for example, with a dollar sign)
+          return '$' + context.parsed.y.toFixed(2)
+        }
+      }
     }
   },
   scales: {
     x: {
       type: 'time' as const,
       display: true,
-      title: {
-        display: false
-      }
+      grid: { display: false }, // remove grid lines on x-axis
+      ticks: { color: '#9CA3AF' }
     },
     y: {
       display: true,
-      title: {
-        display: false
-      }
+      grid: { display: false }, // remove grid lines on y-axis
+      ticks: { color: '#9CA3AF' }
     }
   }
 }
+
+// Once the component is mounted, create a vertical gradient fill
+onMounted(() => {
+  // Access the chart instance via the ref.
+  // Note: How you access the internal Chart.js instance may differ based on your version.
+  const chart = chartRef.value?.chartInstance || chartRef.value?.$data?._chart
+  if (chart) {
+    const ctx = chart.ctx
+    const gradient = ctx.createLinearGradient(0, 0, 0, chart.height)
+    // Define a gradient that starts more opaque at the top and fades to transparent
+    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.4)')
+    gradient.addColorStop(1, 'rgba(16, 185, 129, 0)')
+    chart.data.datasets[0].backgroundColor = gradient
+    chart.update()
+  }
+})
 </script>
 
 <template>
   <div class="networth-chart">
     <h2>Net Worth Over Time</h2>
     <div class="chart-container">
-      <Line :data="chartData" :options="options" />
+      <!-- Bind the ref so we can access the chart instance -->
+      <Line ref="chartRef" :data="chartData" :options="options" />
     </div>
   </div>
 </template>
@@ -120,4 +153,4 @@ h2 {
   height: 300px;
   width: 100%;
 }
-</style> 
+</style>

@@ -355,7 +355,7 @@ const displayedTransactions = computed(() => {
 }
 
 .tx-amount.negative {
-  color: var(--error);
+  color: var(--danger);
 }
 
 .tx-date {
