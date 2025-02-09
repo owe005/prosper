@@ -123,7 +123,7 @@ const selectCategory = (categoryName: string) => {
   showCategoryDropdown.value = false
 }
 
-// Computed property for displayed budgets
+// Computed property for displayed budget
 const displayedBudgets = computed(() => {
   return budgets.value
 })
