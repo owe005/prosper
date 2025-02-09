@@ -86,8 +86,13 @@ const options = {
       intersect: false,
       callbacks: {
         label: (context: any) => {
-          // Customize tooltip text (for example, with a dollar sign)
-          return '$' + context.parsed.y.toFixed(2)
+          const amount = context.parsed.y.toLocaleString('nb-NO', {
+            style: 'currency',
+            currency: 'NOK',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          })
+          return amount
         }
       }
     }
@@ -102,7 +107,18 @@ const options = {
     y: {
       display: true,
       grid: { display: false }, // remove grid lines on y-axis
-      ticks: { color: '#9CA3AF' }
+      ticks: { 
+        color: '#9CA3AF',
+        callback: function(tickValue: number | string) {
+          const value = Number(tickValue)
+          return value.toLocaleString('nb-NO', {
+            style: 'currency',
+            currency: 'NOK',
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+          })
+        }
+      }
     }
   }
 }
