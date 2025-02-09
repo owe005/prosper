@@ -1,4 +1,4 @@
-import { supabase } from "@lib/supabase"
+import { supabase } from "../lib/supabase"
 import type { Transaction, Budget, Category } from '../types/database.types'
 
 
