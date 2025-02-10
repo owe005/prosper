@@ -8,19 +8,19 @@ const router = createRouter({
     {
       path: '/',
       name: 'dashboard',
-      component: () => import('@/views/Dashboard.vue'),
+      component: () => import('@/views/MainDashboard.vue'),
       meta: { requiresAuth: true, requiresEmailConfirmed: true }
     },
     {
       path: '/transactions',
       name: 'transactions',
-      component: () => import('@/views/Transactions.vue'),
+      component: () => import('@/views/TransactionsView.vue'),
       meta: { requiresAuth: true, requiresEmailConfirmed: true }
     },
     {
       path: '/budgets',
       name: 'budgets',
-      component: () => import('@/views/Budgets.vue'),
+      component: () => import('@/views/BudgetOverviewView.vue'),
       meta: { requiresAuth: true, requiresEmailConfirmed: true }
     },
     {
@@ -32,7 +32,7 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/Login.vue'),
+      component: () => import('@/views/LoginView.vue'),
       meta: { requiresAuth: false }
     },
     {

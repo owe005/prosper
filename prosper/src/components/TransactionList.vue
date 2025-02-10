@@ -96,9 +96,9 @@ const resetForm = () => {
 const filteredCategories = computed(() => {
   const search = newTransaction.value.category.toLowerCase().trim()
   
-  if (!search) return categories.value.sort((a, b) => a.name.localeCompare(b.name))
+  if (!search) return [...categories.value].sort((a, b) => a.name.localeCompare(b.name))
   
-  return categories.value
+  return [...categories.value]
     .filter(c => c.name.toLowerCase().includes(search))
     .sort((a, b) => {
       const aName = a.name.toLowerCase()
@@ -107,7 +107,7 @@ const filteredCategories = computed(() => {
       if (bName === search) return 1
       if (aName.startsWith(search) && !bName.startsWith(search)) return -1
       if (bName.startsWith(search) && !aName.startsWith(search)) return 1
-      return 0
+      return aName.localeCompare(bName)
     })
 })
 
@@ -216,16 +216,21 @@ const displayedTransactions = computed(() => {
 
     <div v-else class="transactions-container" :class="{ 'dashboard-height': isDashboard }">
       <div class="transactions">
-        <div v-for="tx in displayedTransactions" :key="tx.id" class="transaction">
-          <div class="tx-info">
-            <div class="tx-description">{{ tx.description }}</div>
-            <div class="tx-category">{{ tx.category }}</div>
-          </div>
-          <div class="tx-details">
-            <span :class="['tx-amount', tx.amount < 0 ? 'negative' : 'positive']">
-              {{ formatAmount(tx.amount) }}
-            </span>
-            <span class="tx-date">{{ formatDate(tx.date) }}</span>
+        <div v-for="transaction in displayedTransactions" 
+             :key="transaction.id" 
+             class="transaction"
+             :class="{ 'income': transaction.amount > 0, 'expense': transaction.amount < 0 }">
+          <div class="transaction-info">
+            <div class="transaction-main">
+              <span class="description">{{ transaction.description }}</span>
+              <span class="amount" :class="{ 'positive': transaction.amount > 0, 'negative': transaction.amount < 0 }">
+                {{ formatAmount(transaction.amount) }}
+              </span>
+            </div>
+            <div class="transaction-details">
+              <span class="category">{{ transaction.category }}</span>
+              <span class="date">{{ formatDate(transaction.date) }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -234,17 +239,203 @@ const displayedTransactions = computed(() => {
 </template>
 
 <style scoped>
-.category-input {
-  position: relative;
-  width: 100%;
+.transaction-list {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 1.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.5s ease-out;
 }
 
-.category-input input {
-  width: 100%;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(to right, var(--text-primary), var(--text-secondary));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.add-button {
+  padding: 0.5rem 1rem;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.transactions-container {
+  flex: 1;
+  overflow-y: auto;
+  margin: -0.5rem;
   padding: 0.5rem;
+}
+
+.transactions-container.dashboard-height {
+  max-height: 300px;
+}
+
+.transactions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.transaction {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+}
+
+.transaction.income {
+  border-left-color: var(--success);
+}
+
+.transaction.expense {
+  border-left-color: var(--danger);
+}
+
+.transaction:hover {
+  transform: translateX(4px);
+  box-shadow: var(--card-shadow);
+}
+
+.transaction-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.transaction-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.description {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-right: 1.5rem;
+  font-size: 1.1rem;
+}
+
+.amount {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: 1.1rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 8px;
+  background: var(--bg-primary);
+}
+
+.amount.positive {
+  color: var(--success);
+  background: rgba(var(--success-rgb), 0.1);
+}
+
+.amount.negative {
+  color: var(--danger);
+  background: rgba(var(--danger-rgb), 0.1);
+}
+
+.transaction-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.category {
+  padding: 0.25rem 0.75rem;
+  background: var(--bg-primary);
+  border-radius: 1rem;
+  font-weight: 500;
+}
+
+.date {
+  font-weight: 500;
+}
+
+.error {
+  color: var(--danger);
+  padding: 1rem;
+  text-align: center;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin: 1rem 0;
+}
+
+.loading {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+  font-style: italic;
+}
+
+/* Form Styles */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select {
+  padding: 0.75rem;
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
   font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-hover);
+}
+
+.category-input {
+  position: relative;
 }
 
 .category-dropdown {
@@ -254,111 +445,68 @@ const displayedTransactions = computed(() => {
   right: 0;
   max-height: 200px;
   overflow-y: auto;
-  background-color: rgb(32, 33, 36);
+  background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
+  border-radius: 8px;
   margin-top: 4px;
-  z-index: 1000;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--card-shadow);
+  z-index: 10;
 }
 
-.category-option, .new-category-option {
-  padding: 0.75rem 1rem;
+.category-option,
+.new-category-option {
+  padding: 0.75rem;
   cursor: pointer;
-  background-color: rgb(32, 33, 36);
-  color: rgb(232, 234, 237);
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.category-option:hover, .new-category-option:hover {
-  background-color: rgb(41, 42, 45);
+.category-option:hover,
+.new-category-option:hover {
+  background: var(--bg-hover);
 }
 
 .new-category-option {
-  border-top: 1px solid var(--border-color);
-  color: rgb(154, 160, 166);
-  font-style: italic;
-  padding: 0.75rem 1rem;
-  background-color: rgb(32, 33, 36);
-}
-
-.existing-categories {
-  border-bottom: 1px solid var(--border-color);
-}
-
-/* Add a subtle scroll bar styling */
-.category-dropdown::-webkit-scrollbar {
-  width: 8px;
-}
-
-.category-dropdown::-webkit-scrollbar-track {
-  background: rgb(32, 33, 36);
-  border-radius: 4px;
-}
-
-.category-dropdown::-webkit-scrollbar-thumb {
-  background: rgb(41, 42, 45);
-  border-radius: 4px;
-}
-
-.category-dropdown::-webkit-scrollbar-thumb:hover {
-  background: rgb(54, 55, 58);
-}
-
-.transactions-container {
-  position: relative;
-  width: 100%;
-}
-
-.transactions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.dashboard-height {
-  max-height: 300px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
-
-.dashboard-height::-webkit-scrollbar {
-  width: 6px;
-}
-
-.dashboard-height::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-  border-radius: 3px;
-}
-
-.dashboard-height::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
-}
-
-.dashboard-height::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
-
-.tx-details {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.tx-amount {
+  color: var(--primary);
   font-weight: 500;
+  border-top: 1px solid var(--border-color);
 }
 
-.tx-amount.positive {
-  color: var(--success);
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
-.tx-amount.negative {
-  color: var(--danger);
+.form-actions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.tx-date {
+.form-actions button[type="button"] {
+  background: var(--bg-secondary);
   color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+.form-actions button[type="submit"] {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.form-actions button:hover {
+  transform: translateY(-1px);
+}
+
+.form-actions button[type="button"]:hover {
+  background: var(--bg-hover);
+}
+
+.form-actions button[type="submit"]:hover {
+  background: var(--primary-hover);
 }
 </style>
