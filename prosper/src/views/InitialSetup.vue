@@ -43,92 +43,48 @@ async function handleSubmit() {
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-card">
-      <h1 class="title">Welcome to Prosper</h1>
-      <p class="subtitle">Let's start by setting up your initial balance</p>
-      
-      <form @submit.prevent="handleSubmit" class="login-form">
-        <div class="form-group">
-          <label for="balance">What's your current net worth?</label>
-          <div class="amount-input">
-            <span class="currency">kr</span>
-            <input 
-              id="balance"
-              v-model.number="initialBalance"
-              type="number"
-              required
-              min="0"
-              step="1"
-              placeholder="0"
-            >
-          </div>
-          <p class="help-text">
-            This helps us track your financial progress over time.
-            Include the total value of your:
-          </p>
-          <ul class="help-list">
-            <li>Cash and bank accounts</li>
-            <li>Investments</li>
-            <li>Property and assets</li>
-            <li>Minus any debts or loans</li>
-          </ul>
+  <div class="login-card">
+    <h1 class="title">Welcome to Prosper</h1>
+    <p class="subtitle">Let's start by setting up your initial balance</p>
+    
+    <form @submit.prevent="handleSubmit" class="login-form">
+      <div class="form-group">
+        <label for="balance">What's your current net worth?</label>
+        <div class="amount-input">
+          <span class="currency">kr</span>
+          <input 
+            id="balance"
+            v-model.number="initialBalance"
+            type="number"
+            required
+            min="0"
+            step="1"
+            placeholder="0"
+          >
         </div>
+        <p class="help-text">
+          This helps us track your financial progress over time.
+          Include the total value of your:
+        </p>
+        <ul class="help-list">
+          <li>Cash and bank accounts</li>
+          <li>Investments</li>
+          <li>Property and assets</li>
+          <li>Minus any debts or loans</li>
+        </ul>
+      </div>
 
-        <div v-if="error" class="error-message">
-          {{ error }}
-        </div>
+      <div v-if="error" class="error-message">
+        {{ error }}
+      </div>
 
-        <button 
-          type="submit" 
-          class="submit-button"
-          :disabled="isLoading"
-        >
-          Get Started
-        </button>
-      </form>
-    </div>
+      <button 
+        type="submit" 
+        class="submit-button"
+        :disabled="isLoading"
+      >
+        Get Started
+      </button>
+    </form>
   </div>
-</template>
-
-<style scoped>
-.subtitle {
-  text-align: center;
-  color: var(--text-secondary);
-  margin-bottom: 2rem;
-}
-
-.amount-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.currency {
-  position: absolute;
-  left: 1rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
-.amount-input input {
-  padding-left: 2.5rem !important;
-}
-
-.help-text {
-  margin-top: 1rem;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.help-list {
-  margin-top: 0.5rem;
-  padding-left: 1.5rem;
-  color: var(--text-secondary);
-  font-size: 0.875rem;
-}
-
-.help-list li {
-  margin-bottom: 0.25rem;
-}
-</style> 
+</template> 

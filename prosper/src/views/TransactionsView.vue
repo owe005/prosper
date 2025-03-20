@@ -11,19 +11,3 @@ import TransactionList from '@/components/TransactionList.vue'
     <TransactionList />
   </div>
 </template>
-
-<style scoped>
-.transactions-view {
-  padding: 2rem;
-}
-
-.view-header {
-  margin-bottom: 2rem;
-}
-
-h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-</style> 

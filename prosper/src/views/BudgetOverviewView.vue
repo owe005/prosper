@@ -11,13 +11,3 @@ import BudgetOverview from '@/components/BudgetOverview.vue'
     <BudgetOverview />
   </div>
 </template>
-
-<style scoped>
-.budgets-view {
-  padding: 2rem;
-}
-
-.view-header {
-  margin-bottom: 2rem;
-}
-</style>

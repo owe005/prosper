@@ -62,6 +62,11 @@ router.beforeEach(async (to) => {
     return { name: 'confirm-email' }
   }
 
+  // Redirect from confirm-email to dashboard if email is already confirmed
+  if (to.name === 'confirm-email' && auth.user?.email_confirmed_at) {
+    return { name: 'dashboard' }
+  }
+
   if (to.name === 'login' && auth.user) {
     return { name: 'dashboard' }
   }

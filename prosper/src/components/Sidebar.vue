@@ -15,58 +15,30 @@ const handleNavigation = (section: string) => {
 </script>
 
 <template>
-  <aside class="sidebar">
-    <div class="sidebar-top">
-      <div class="logo">
-        <img src="../assets/prosper.png" alt="Prosper logo" class="logo-img">
-        <span>prosper</span>
-      </div>
-
-      <nav class="main-nav">
-        <button 
-          class="nav-item"
-          :class="{ active: activeSection === 'dashboard' }"
-          @click="handleNavigation('dashboard')"
-        >
-          <span class="icon">
-            <font-awesome-icon icon="chart-line" />
-          </span>
-          Dashboard
-        </button>
-        <button 
-          class="nav-item"
-          :class="{ active: activeSection === 'transactions' }"
-          @click="handleNavigation('transactions')"
-        >
-          <span class="icon">
-            <font-awesome-icon icon="receipt" />
-          </span>
-          Transactions
-        </button>
-        <button 
-          class="nav-item"
-          :class="{ active: activeSection === 'budgets' }"
-          @click="handleNavigation('budgets')"
-        >
-          <span class="icon">
-            <font-awesome-icon icon="wallet" />
-          </span>
-          Budgets
-        </button>
-      </nav>
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="@/assets/logo.svg" alt="Prosper Logo" class="logo-img" />
+      <span class="logo-text">Prosper</span>
     </div>
-
-    <div class="sidebar-bottom">
-      <div class="user-info">
-        <div class="user-avatar">👤</div>
-        <span class="user-email" :title="auth.user?.email">{{ auth.user?.email }}</span>
-      </div>
-      <button class="sign-out-button" @click="emit('sign-out')">
-        <span>🚪</span>
-        Sign Out
-      </button>
+    <div class="nav-links">
+      <router-link to="/" class="nav-link" active-class="active">
+        <i class="fas fa-chart-line icon"></i>
+        <span>Dashboard</span>
+      </router-link>
+      <router-link to="/transactions" class="nav-link" active-class="active">
+        <i class="fas fa-exchange-alt icon"></i>
+        <span>Transactions</span>
+      </router-link>
+      <router-link to="/categories" class="nav-link" active-class="active">
+        <i class="fas fa-tags icon"></i>
+        <span>Categories</span>
+      </router-link>
+      <router-link to="/settings" class="nav-link" active-class="active">
+        <i class="fas fa-cog icon"></i>
+        <span>Settings</span>
+      </router-link>
     </div>
-  </aside>
+  </nav>
 </template>
 
 <style scoped>

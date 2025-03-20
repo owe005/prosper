@@ -38,16 +38,11 @@ router.afterEach(() => {
   <div class="app-container">
     <div class="gradient-bg"></div>
     <LoadingSpinner v-if="isLoading" />
-    <div class="app-layout">
-      <template v-if="auth.user">
-        <Sidebar @sign-out="handleSignOut" />
-        <main class="main-content">
-          <RouterView />
-        </main>
-      </template>
-      <template v-else>
+    <div class="app-layout" :class="{ 'auth-layout': !auth.user }">
+      <Sidebar v-if="auth.user" @sign-out="handleSignOut" />
+      <main :class="{ 'main-content': auth.user }">
         <RouterView />
-      </template>
+      </main>
     </div>
   </div>
 </template>
@@ -92,6 +87,11 @@ router.afterEach(() => {
   position: relative;
   backdrop-filter: blur(100px);
   -webkit-backdrop-filter: blur(100px);
+}
+
+.auth-layout {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 .main-content {

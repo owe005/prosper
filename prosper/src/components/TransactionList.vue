@@ -4,6 +4,7 @@ import { financeService } from '../services/financeService'
 import { supabase } from '../lib/supabase'
 import type { Transaction, Category } from '../types/database.types'
 import Modal from './Modal.vue'
+import LoadingSpinner from './LoadingSpinner.vue'
 
 const props = defineProps<{
   isDashboard?: boolean
@@ -147,7 +148,10 @@ const displayedTransactions = computed(() => {
   <div class="transaction-list" :class="{ 'is-dashboard': isDashboard }">
     <div class="header">
       <h2>Recent Transactions</h2>
-      <button @click="showModal = true" class="add-button">Add Transaction</button>
+      <button @click="showModal = true" class="add-button">
+        <i class="fas fa-plus"></i>
+        Add Transaction
+      </button>
     </div>
 
     <Modal 
